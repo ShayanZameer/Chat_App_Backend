@@ -1,9 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-const multer = require("multer");
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = require("../config/Cloudinary/multer");
 
 const {
   signup,
@@ -12,6 +10,7 @@ const {
   deleteUser,
   forgotPassword,
   resetPassword,
+  getAllUsers,
 } = require("../controllers/userController/userController");
 
 const router = express.Router();
@@ -25,4 +24,5 @@ router.put("/updateuser/:id", authMiddleware, updateUser);
 router.delete("/deleteuser/:id", authMiddleware, deleteUser);
 
 router.post("/resetpassword/:token", resetPassword);
+router.get("/getuser", authMiddleware, getAllUsers);
 module.exports = router;

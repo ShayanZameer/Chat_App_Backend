@@ -1,0 +1,21 @@
+const express = require("express");
+const authMiddleware = require("../middlewares/authMiddleware");
+
+const {
+  createChat,
+  fetchChats,
+  renameGroup,
+  removeFromGroup,
+  addInGroup,
+} = require("../controllers/chatController/chatController");
+
+const router = express.Router();
+
+router.post("/createchat", authMiddleware, createChat);
+
+router.get("/fetchchats", authMiddleware, fetchChats);
+router.put("/renamegroup", authMiddleware, renameGroup);
+// router.put("/removefromgroup", authMiddleware, removeFromGroup);
+// router.put("/addingroup", authMiddleware, addInGroup);
+
+module.exports = router;

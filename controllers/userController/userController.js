@@ -2,7 +2,6 @@ const User = require("../../Models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-
 require("dotenv").config();
 const cloudinary = require("../../config/Cloudinary/cloudinary");
 
@@ -43,6 +42,7 @@ const uploadToCloudinary = async (file) => {
 
 exports.signup = async (req, res) => {
   try {
+    console.log("helo");
     const { name, email, password, confirmPassword, role } = req.body;
     let pic;
     try {
@@ -58,6 +58,8 @@ exports.signup = async (req, res) => {
     }
 
     const existingUser = await User.findOne({ email });
+
+    console.log("hey");
 
     if (existingUser) {
       return res
@@ -160,7 +162,7 @@ exports.deleteUser = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("email is ", email);
+    // console.log("email is ", email);
 
     const user = await User.findOne({ email });
     console.log("user is ", user);
@@ -177,7 +179,9 @@ exports.forgotPassword = async (req, res) => {
     user.resetTokenExpiration = resetTokenExpiration;
     await user.save();
 
-    const resetLink = `${process.env.CLIENT_URL}/resetpassword/${resetToken}`;
+    console.log("user si ", user);
+
+    const resetLink = `${process.env.HOST}/resetpassword/${resetToken}`;
 
     const emailSubject = "Password Reset Request";
     const emailText = `Hi ${user.name},\n\nPlease click the following link to reset your password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.`;
@@ -234,5 +238,30 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully", user });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const keyword = req.query.search
+      ? {
+          $or: [
+            {
+              name: { $regex: req.query.search, $options: "i" },
+            },
+            {
+              email: { $regex: req.query.search, $options: "i" },
+            },
+          ],
+        }
+      : {};
+
+    const users = await User.find(keyword);
+
+    res.status(200).json(users);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Internal Server error", error: error.message });
   }
 };
