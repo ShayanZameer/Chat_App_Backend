@@ -6,6 +6,7 @@ const cors = require("cors");
 dotenv.config();
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 const PORT = process.env.PORT;
 connectDb();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoutes);
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Api is running");
