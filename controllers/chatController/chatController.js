@@ -3,11 +3,10 @@ const User = require("../../Models/userModel");
 
 exports.createChat = async (req, res) => {
   try {
-    const { chatName, users, isGroupChat, groupAdmin, latestMessage } =
-      req.body;
+    const { chatName, users, isGroupChat, latestMessage } = req.body;
 
     const loggedInUserId = req.user._id;
-    console.log("loggedInUSer is ", loggedInUserId);
+    const groupAdmin = req.user._id;
 
     if (!chatName || !users) {
       return res
@@ -73,8 +72,6 @@ exports.renameGroup = async (req, res) => {
     const { chatId, chatName } = req.body;
     const loggedInUserId = req.user._id;
 
-    console.log("chat Name is ", chatName);
-
     if (!chatId || !chatName) {
       return res
         .status(400)
@@ -94,11 +91,73 @@ exports.renameGroup = async (req, res) => {
     }
 
     chat.chatName = chatName;
-    console.log("hello ", chat.chatName);
     await chat.save();
 
     res.status(200).json({ message: "Name updated successfully", chat });
   } catch (error) {
     res.status(400).json({ message: "internal server", error: error.message });
+  }
+};
+
+exports.removeFromGroup = async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  const chat = await Chat.findById(chatId);
+  if (!chat) {
+    return res.status(400).json({ message: "Chat not found" });
+  }
+  if (!chat.groupAdmin) {
+    return res.status(400).json({ message: "Group admin not defined." });
+  }
+
+  if (chat.groupAdmin.toString() !== req.user._id.toString()) {
+    return res.status(400).json({ message: "Only Admin can delete user" });
+  }
+
+  if (!chat.users.includes(userId)) {
+    return res.status(400).json({ message: "User Not found in Chat" });
+  }
+
+  chat.users = chat.users.filter(
+    (user) => user._id.toString() === userId.toString()
+  );
+
+  console.log("chat user after performing are", chat.users);
+
+  await chat.save();
+  res.status(200).json({ message: "User deleted from group ", chat });
+};
+
+exports.addToGroup = async (req, res) => {
+  try {
+    const { chatId, userId } = req.body;
+    const user = await User.findById(userId);
+    const chat = await Chat.findById(chatId);
+
+    if (!user) {
+      return res.status(400).json({ message: "User Not found" });
+    }
+
+    if (!chat) {
+      return res.status(400).json({ message: "Chat Not found" });
+    }
+    if (chat.groupAdmin.toString() !== req.user._id.toString()) {
+      return res.status(400).json({ message: "Only Admin can Add new user" });
+    }
+    if (!chat.isGroupChat) {
+      return res.status(400).json({ message: " Group Chat Not found" });
+    }
+
+    if (chat.users.includes(userId)) {
+      return res.status(400).json({ message: "User already Added" });
+    }
+
+    chat.users.push(userId);
+
+    await chat.save();
+
+    res.status(200).json({ message: "User added to Group chat", chat });
+  } catch (error) {
+    res.status(400).json({ message: "internal server ", error: error.message });
   }
 };
