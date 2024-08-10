@@ -11,6 +11,7 @@ const {
   forgotPassword,
   resetPassword,
   getAllUsers,
+  getUserIdByEmail,
 } = require("../controllers/userController/userController");
 
 const router = express.Router();
@@ -25,4 +26,6 @@ router.delete("/deleteuser/:id", authMiddleware, deleteUser);
 
 router.post("/resetpassword/:token", resetPassword);
 router.get("/getuser", authMiddleware, getAllUsers);
+router.get("/getidbyemail", getUserIdByEmail);
+
 module.exports = router;

@@ -271,3 +271,27 @@ exports.getAllUsers = async (req, res) => {
       .json({ message: "Internal Server error", error: error.message });
   }
 };
+
+exports.getUserIdByEmail = async (req, res) => {
+  let { email } = req.query;
+  console.log("email is ", email);
+
+  email = email.trim().toLowerCase();
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({ userId: user._id });
+  } catch (error) {
+    console.error("Error fetching user ID:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
