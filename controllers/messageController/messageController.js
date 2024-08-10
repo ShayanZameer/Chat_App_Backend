@@ -30,7 +30,10 @@ exports.sendMessage = async (req, res) => {
       select: "name email",
     });
 
-    await Chat.findByIdAndUpdate(chatId, { latestMessage: message._id });
+    await Chat.findByIdAndUpdate(chatId, {
+      latestMessage: message._id,
+      $push: { messages: message._id },
+    });
 
     res.json(message);
   } catch (error) {

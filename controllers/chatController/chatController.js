@@ -50,12 +50,11 @@ exports.createChat = async (req, res) => {
 exports.fetchChats = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    console.log("log in user", loggedInUserId);
 
     const chats = await Chat.find({
       users: { $elemMatch: { $eq: loggedInUserId } },
     })
-      .populate("users", "name email")
+      .populate("users", "name email pic")
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
 

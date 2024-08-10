@@ -85,9 +85,10 @@ exports.signup = async (req, res) => {
 
     const token = createToken(newUser._id);
 
-    res
-      .status(201)
-      .json({ token, user: { name: newUser.name, email: newUser.email } });
+    res.status(201).json({
+      token,
+      user: { name: newUser.name, email: newUser.email, pic: newUser.pic },
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -114,7 +115,12 @@ exports.login = async (req, res) => {
     res.status(200).json({
       message: "Login successfully",
       token,
-      user: { name: user.name, email: user.email },
+      user: {
+        name: user.name,
+        email: user.email,
+        userId: user._id,
+        pic: user.pic,
+      },
     });
   } catch (error) {
     res.status(400).json({ message: "Server error", error: error.message });
