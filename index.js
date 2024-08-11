@@ -23,7 +23,9 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Api is running");
+  res
+    .send("BACKEND DEVELOPED BY SHAYAN ZAMEER")
+    .json({ message: "API RUNNING WELL" });
 });
 
 app.listen(PORT, () => {

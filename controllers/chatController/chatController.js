@@ -27,6 +27,18 @@ exports.createChat = async (req, res) => {
       res.status(400).json({ message: "one or more users not found" });
     }
 
+    const existingChat = await Chat.findOne({
+      isGroupChat: false,
+      users: { $all: [loggedInUserId, ...users], $size: 2 },
+    });
+
+    if (existingChat) {
+      return res.status(400).json({
+        message: "Chat already exists. Select the existing chat.",
+        chat: existingChat,
+      });
+    }
+
     const chatData = {
       chatName,
       users: isGroupChat
