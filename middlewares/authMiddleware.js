@@ -6,8 +6,6 @@ const authMiddleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
 
-    console.log("token is", token);
-
     if (!token) {
       res.status(400).json({ message: "Access Denied , No Token Provided" });
     }
@@ -22,7 +20,7 @@ const authMiddleware = async (req, res, next) => {
 
     req.user = user;
 
-    console.log("req.user", req.user);
+    // console.log("req.user", req.user);
     next();
   } catch (error) {
     res.status(400).json({ message: "Server error", error: error.message });

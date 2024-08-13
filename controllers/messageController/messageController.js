@@ -21,7 +21,6 @@ exports.sendMessage = async (req, res) => {
     };
 
     let message = await Message.create(newMessage);
-    console.log("message is ", message);
     message = await message.populate("sender", "name email");
     message = await message.populate("chat");
 
