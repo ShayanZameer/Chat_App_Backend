@@ -1,5 +1,6 @@
 const Chat = require("../../Models/chatModel");
 const User = require("../../Models/userModel");
+const Message = require("../../Models/messageModel");
 
 exports.createChat = async (req, res) => {
   try {

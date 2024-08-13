@@ -7,6 +7,7 @@ const {
   renameGroup,
   removeFromGroup,
   addToGroup,
+  saveMessagesOnDisconnect,
 } = require("../controllers/chatController/chatController");
 
 const router = express.Router();
